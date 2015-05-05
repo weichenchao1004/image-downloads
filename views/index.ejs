@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="/jquery/dist/jquery.js"></script>
+    <script src="/async/lib/async.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+
+            var input = document.querySelector('input');
+            input.addEventListener('change', function(){
+                console.log('change');
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/downloads');
+                xhr.setRequestHeader('accept', 'application/json');
+                xhr.setRequestHeader('content-type', 'application/json');
+                xhr.addEventListener('readystatechange', function () {
+                    if( xhr.readyState === 4 && xhr.status === 200 ) {
+                        var obj = JSON.parse(xhr.responseText);
+                        console.log(obj);
+                        // response from the backend
+                        var parent = document.querySelector('ul');
+                        obj.files.map(function(item){
+                            createElement('li', parent, item, '');
+                        });
+
+
+                    }
+                });
+                xhr.send(JSON.stringify({
+                    url: this.value
+                }));
+                console.log(this.value);
+            });
+
+
+            function createElement(type, parent, innerHTML, className) {
+                var element = document.createElement(type);
+                if (parent) parent.appendChild(element);
+                if (innerHTML) element.innerHTML = innerHTML;
+                if (className) element.className = className;
+                return element;
+            }
+
+        }); // End of DOMContentLoaded
+
+
+
+    </script>
+</head>
+<body>
+<h1>Down load images</h1>
+<input width="150" type="text" value="https://www.yahoo.co"/>
+<div>
+    <ul></ul>
+</div>
+</body>
+</html>
